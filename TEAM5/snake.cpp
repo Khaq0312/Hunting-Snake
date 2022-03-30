@@ -36,8 +36,6 @@ int SIZE_SNAKE;
 int STATE;
 HIGHSCORE highscore[MAX_HIGH_SCORE]; int nHighscore = 0;
 
-
-
 string filegame[MAX_FILE_GAME];
 int nFileGame = 0;
 
@@ -684,10 +682,11 @@ void Eat() {
 	}
 	SCORE++;
 }
+
 void ResetData() {
 	//Initialize the global values
 	CHAR_LOCK = 'A', MOVING = 'D', SPEED = 1; FOOD_INDEX = 0, WIDTH_CONSOLE = 70,
-		HEIGH_CONSOLE = 20, SIZE_SNAKE = 6;
+		HEIGH_CONSOLE = 20, SIZE_SNAKE = 6, SCORE = 0, LEVEL = 0;
 	// Initialize default values for snake
 	snake[0] = { 10, 1 }; snake[1] = { 11, 1 };
 	snake[2] = { 12, 1 }; snake[3] = { 13, 1 };
@@ -793,7 +792,7 @@ void MoveRight()
 void MoveLeft()
 {
 	bool eat = 0;
-	if (snake[SIZE_SNAKE - 1].x - 1 == WIDTH_CONSOLE)
+	if (snake[SIZE_SNAKE - 1].x - 1 == 0)
 	{
 		ProcessDead();
 	}
@@ -819,7 +818,7 @@ void MoveLeft()
 void MoveUp()
 {
 	bool eat = 0;
-	if (snake[SIZE_SNAKE - 1].y - 1 == HEIGH_CONSOLE)
+	if (snake[SIZE_SNAKE - 1].y - 1 == 0)
 	{
 		ProcessDead();
 	}
@@ -1158,5 +1157,17 @@ int main() {
 				}
 			}
 		}
+	}
+
+	if (choice == 2) {
+		drawLoadGame();
+	}
+
+	if (choice == 3) {
+		drawHighScore();
+	}
+
+	if (choice == 4) {
+		drawAboutUs();
 	}
 }
