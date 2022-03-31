@@ -21,6 +21,7 @@ struct HIGHSCORE {
 #define MAX_FILE_GAME 5
 static int HEIGHT_WINDOW = 30, WIDTH_WINDOW = 110;
 int LEVEL;
+int OBScount = 0;
 int SCORE;
 #define MAX_SPEED 3
 POINT snake[MAX_SIZE_SNAKE];
@@ -43,12 +44,10 @@ void ExitGame(HANDLE t) {
 	system("cls");
 	TerminateThread(t, 0);
 }
-
 //Function pause game
 void PauseGame(HANDLE t) {
 	SuspendThread(t);
 }
-
 // Chuc nang: an/hien con tro chuot
 void showConsoleCursor(bool showFlag) {
 	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -57,14 +56,12 @@ void showConsoleCursor(bool showFlag) {
 	cursorInfo.bVisible = showFlag;
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
-
 void fixConsoleWindow() {
 	HWND consoleWindow = GetConsoleWindow();
 	LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
 	style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
 	SetWindowLong(consoleWindow, GWL_STYLE, style);
 }
-
 void setScreenBufferSize(SHORT width, SHORT height) {
 	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD size;
@@ -72,7 +69,6 @@ void setScreenBufferSize(SHORT width, SHORT height) {
 	size.Y = height;
 	SetConsoleScreenBufferSize(output, size);
 }
-
 void setWindowSize(SHORT width, SHORT height) {
 	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
 	SMALL_RECT size;
@@ -82,14 +78,12 @@ void setWindowSize(SHORT width, SHORT height) {
 	size.Bottom = height - 1;
 	SetConsoleWindowInfo(output, 1, &size);
 }
-
 void gotoXY(int x, int y) {
 	COORD coord;
 	coord.X = x;
 	coord.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
-
 void drawBoard(int x, int y, int width, int height) {
 	gotoXY(x, y);
 	cout << (char)220;
@@ -104,13 +98,11 @@ void drawBoard(int x, int y, int width, int height) {
 	}
 	gotoXY(0, 0);
 }
-
 void setColor(int background_color, int text_color) {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 	int color_code = background_color * 16 + text_color;
 	SetConsoleTextAttribute(hStdout, color_code);
 }
-
 // Chuc nang: ve duong thang dung
 // Tham so truyen vao: ki tu, chieu dai cua doan thang, toa do bat dau
 void drawVerLine(int c, int length, int x, int y) {
@@ -231,7 +223,6 @@ int chooseMenu() {
 		}
 	}
 }
-
 void eraseDrawing(POINT start, POINT end) {
 	int mode = _setmode(_fileno(stdout), _O_U16TEXT);
 	for (int i = start.x; i <= end.x; i++) {
@@ -242,7 +233,6 @@ void eraseDrawing(POINT start, POINT end) {
 	}
 	mode = _setmode(_fileno(stdout), mode);
 }
-
 // Chuc nang: ve giao dien luc choi game
 void drawGame() {
 	// draw board
@@ -340,7 +330,6 @@ void drawGame() {
 	cout << "SCORE: "; // ======== score duoc cap nhat trong ham ThreadFunc() =========
 	setColor(0, 7);
 }
-
 // Chuc nang: doc danh sach ten cac file luu data game cua nguoi choi
 void readFileGame(const char* filePath) {
 	ifstream fIn;
@@ -351,7 +340,6 @@ void readFileGame(const char* filePath) {
 	}
 	fIn.close();
 }
-
 void drawArtVideoGame(int x, int y) {
 	for (int i = 0; i < 10; i++) {
 		gotoXY(x, y);
@@ -370,7 +358,6 @@ void drawArtVideoGame(int x, int y) {
 		y++;
 	}
 }
-
 // Chuc nang: ve danh sach file load game
 void drawLoadGame() {
 	system("cls");
@@ -414,7 +401,6 @@ void drawLoadGame() {
 		if (i == 0) setColor(0, 7);
 	}
 }
-
 // Chuc nang: chon file de load game bang cac phim len xuong
 string chooseFileLoadGame() {
 	int choice = 0;
@@ -444,7 +430,6 @@ string chooseFileLoadGame() {
 		}
 	}
 }
-
 void drawArtTrophy(int x, int y) {
 	for (int i = 0; i < 10; i++) {
 		gotoXY(x, y);
@@ -463,7 +448,6 @@ void drawArtTrophy(int x, int y) {
 		y++;
 	}
 }
-
 void readHighScore(const char* filePath) {
 	ifstream fIn;
 	string s;
@@ -476,7 +460,6 @@ void readHighScore(const char* filePath) {
 	}
 	fIn.close();
 }
-
 // Chuc nang: ve danh sach 5 nguoi choi dat diem cao
 void drawHighScore() {
 	system("cls");
@@ -547,7 +530,6 @@ void drawHighScore() {
 		y++;
 	}
 }
-
 void drawAboutUs() {
 	system("cls");
 	// draw title
@@ -650,14 +632,12 @@ void readData(string filePath) {
 	fIn.close();
 	GenerateFood();
 }
-
 void loadGame(string filePath) {
 	system("cls");
 	readData(filePath);
 	drawGame();
 	STATE = 1;//Start running Thread
 }
-
 void ProcessDead() {
 	STATE = 0;
 	gotoXY(0, HEIGH_CONSOLE + 2);
@@ -676,6 +656,23 @@ void Eat() {
 		else {
 			LEVEL++;
 			SPEED++;
+			switch (LEVEL)
+			{
+			case 1:
+				Level2(OBScount);
+				break;
+			case 2:
+				Level3(OBScount);
+				break;
+			case 3:
+				Level4(OBScount);
+				break;
+			case 4:
+				Level5(OBScount);
+				break;
+			default:
+				break;
+			}
 		}
 		GenerateFood();
 	}
@@ -685,7 +682,6 @@ void Eat() {
 	}
 	SCORE++;
 }
-
 void ResetData() {
 	//Initialize the global values
 	CHAR_LOCK = 'A', MOVING = 'D', SPEED = 1; FOOD_INDEX = 0, WIDTH_CONSOLE = 70,
@@ -696,7 +692,6 @@ void ResetData() {
 	snake[4] = { 14, 1 }; snake[5] = { 15, 1 };
 	GenerateFood();//Create food array
 }
-
 //Ham moi/chinh sua
 void drawVerOBS(int c, int length, int x, int y, int& count) {
 	for (int i = 0; i < length; i++) {
@@ -774,7 +769,6 @@ void MoveRight()
 		snake[SIZE_SNAKE - 1].x++;
 	}
 }
-
 void MoveLeft()
 {
 	if (snake[SIZE_SNAKE - 1].x - 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
@@ -794,7 +788,6 @@ void MoveLeft()
 		snake[SIZE_SNAKE - 1].x--;
 	}
 }
-
 void MoveUp()
 {
 	if (snake[SIZE_SNAKE - 1].y - 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
@@ -814,7 +807,6 @@ void MoveUp()
 		snake[SIZE_SNAKE - 1].y--;
 	}
 }
-
 void MoveDown()
 {
 	if (snake[SIZE_SNAKE - 1].y + 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0)
@@ -848,26 +840,6 @@ void DrawGate(int& count)
 	drawVerOBS(220, 1, trigger.x - 1, trigger.y, count);
 	drawVerOBS(220, 1, trigger.x + 1, trigger.y, count);
 }
-void DrawBoard(int x, int y, int width, int height) {
-	int count = 0;
-	gotoXY(x, y);
-	cout << (char)220;
-	for (int i = 1; i < width; i++)cout << (char)220;
-	cout << (char)220;
-	gotoXY(x, height + y); cout << (char)223;
-	for (int i = 1; i < width; i++)cout << (char)223;
-	cout << (char)223;
-	for (int i = y + 1; i < height + y; i++) {
-		gotoXY(x, i); cout << (char)219;
-		gotoXY(x + width, i); cout << (char)219;
-	}
-	Level2(count);
-	Level3(count);
-	Level4(count);
-	Level5(count);
-	DrawGate(count);
-	gotoXY(0, 0);
-}
 bool IsValid(int x, int y) {
 	for (int i = 0; i < SIZE_SNAKE; i++) {
 		if ((snake[i].x == x && snake[i].y == y) || (OBSTACLE[i].x == x && OBSTACLE[i].y == y))
@@ -875,7 +847,6 @@ bool IsValid(int x, int y) {
 	}
 	return true;
 }
-
 void DrawSnake() {
 	setColor(0, 10);
 	char ms[25] = "211274782112762321127237";
@@ -932,7 +903,7 @@ void ThreadFunc() {
 			cout << SCORE;
 			DrawFood();
 			DrawSnake();
-			Sleep(400 / SPEED);//Sleep function with SPEEED variable
+			Sleep(200 / SPEED);//Sleep function with SPEEED variable
 		}
 	}
 }
@@ -981,14 +952,12 @@ void swapScore(int& x, int& y)//Doi vi tri thu tu diem
 	y = x - y;
 	x = x - y;
 }
-
 void swapName(string& x, string& y)//Doi vi tri thu tu nguoi choi
 {
 	string temp = x;
 	x = y;
 	y = temp;
 }
-
 bool checkScore(HIGHSCORE a[], int n, int score)//Kiem tra diem co nam trong top 5 khong
 {
 	for (int i = 0; i < n; ++i)
@@ -998,7 +967,6 @@ bool checkScore(HIGHSCORE a[], int n, int score)//Kiem tra diem co nam trong top
 	}
 	return 0;
 }
-
 void saveHighScore(HIGHSCORE a[], int n, int score)//Luu diem nam trong top 5
 {
 	if (checkScore(a, n, score))
@@ -1009,7 +977,6 @@ void saveHighScore(HIGHSCORE a[], int n, int score)//Luu diem nam trong top 5
 		a[n - 1].score = score;
 	}
 }
-
 void sortListHighScore(HIGHSCORE a[], int n)//sap xep thu tu diem cao den thap
 {
 	for (int i = 0; i < n - 1; ++i)
@@ -1024,7 +991,6 @@ void sortListHighScore(HIGHSCORE a[], int n)//sap xep thu tu diem cao den thap
 		}
 	}
 }
-
 void WriteHighScore(const char* filePath, HIGHSCORE a[], int n)//Luu list high score vao file
 {
 	ofstream fOut;
@@ -1035,7 +1001,6 @@ void WriteHighScore(const char* filePath, HIGHSCORE a[], int n)//Luu list high s
 	}
 	fOut.close();
 }
-
 void checkFileGame(string FileGame[], int nFileGame, string filenametemp)//Kiem tra file game co bi trung ten hay khong
 {
 	for (int i = 0; i < nFileGame; ++i)
@@ -1051,7 +1016,6 @@ void checkFileGame(string FileGame[], int nFileGame, string filenametemp)//Kiem 
 		}
 	}
 }
-
 void SaveGame(const char* filePath, int CHAR_LOCK, int MOVING, int SPEED, int LEVEL, int FOOD_INDEX, int SIZE_SNAKE, int SCORE, int x, int y)
 {
 	ofstream fOut;
