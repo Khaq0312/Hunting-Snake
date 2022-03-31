@@ -97,6 +97,7 @@ void drawBoard(int x, int y, int width, int height) {
 		gotoXY(x + width, i); cout << (char)219;
 	}
 	gotoXY(0, 0);
+	
 }
 void setColor(int background_color, int text_color) {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
