@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <string>
 #include "Header.h"
-
 using namespace std;
 struct HIGHSCORE {
 	std::string name;
@@ -129,6 +128,7 @@ void drawArtSnake(int x, int y) {
 	}
 }
 void drawMenu() {
+	system("cls");
 	setColor(0, 14);
 	// draw title
 	int x = (WIDTH_WINDOW - 100) / 2, y = 4;
@@ -161,7 +161,7 @@ void drawMenu() {
 	setColor(0, 7);
 	// draw main menu
 	x = (WIDTH_WINDOW - 24) / 2 - 1, y = (HEIGHT_WINDOW - 10) / 2 + 3;
-	drawBoard(x, y, 24, 10);
+	drawBoard(x, y, 24, 12);
 	x += 8;
 	gotoXY(x, y + 2);
 	setColor(0, 12);
@@ -173,6 +173,8 @@ void drawMenu() {
 	cout << "HIGH SCORE";
 	gotoXY(x, y + 8);
 	cout << "ABOUT US";
+	gotoXY(x, y + 10);
+	cout << "EXIT";
 }
 // Chuc nang: chon menu bang cac phim len, xuong
 int chooseMenu() {
@@ -188,15 +190,13 @@ int chooseMenu() {
 			break;
 		case 80:
 			choice++;
-			if (choice > 4) choice = 4;
+			if (choice > 5) choice = 5;
 			break;
 		case 13:
 			return choice;
 		}
-		for (int i = 1; i <= 4; i++) {
-			if (i == choice) {
-				setColor(0, 12);
-			}
+		for (int i = 1; i <= 5; i++) {
+			if (i == choice) setColor(0, 12);
 			switch (i) {
 			case 1:
 				gotoXY(x, y);
@@ -214,20 +214,24 @@ int chooseMenu() {
 				gotoXY(x, y + 6);
 				cout << "ABOUT US";
 				break;
+			case 5:
+				gotoXY(x, y + 8);
+				cout << "EXIT";
+				break;
 			}
-			if (i == choice) {
-				setColor(0, 7);
-			}
+			if (i == choice) setColor(0, 7);
 		}
 	}
 }
 void eraseDrawing(POINT start, POINT end) {
+	int mode = _setmode(_fileno(stdout), _O_U16TEXT);
 	for (int i = start.x; i <= end.x; i++) {
 		for (int j = start.y; j < end.y; j++) {
 			gotoXY(i, j);
 			wcout << L" ";
 		}
 	}
+	mode = _setmode(_fileno(stdout), mode);
 }
 // Chuc nang: ve giao dien luc choi game
 void drawGame() {
@@ -602,7 +606,7 @@ void drawAboutUs() {
 }
 void GenerateFood() {
 	int x, y;
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	for (int i = 0; i < MAX_SIZE_FOOD; i++) {
 		do {
 			x = rand() % (WIDTH_CONSOLE - 1) + 1;
@@ -689,18 +693,18 @@ void ResetData() {
 	GenerateFood();//Create food array
 }
 //Ham moi/chinh sua
-void drawVerOBS(char c, int length, int x, int y, int& count) {
+void drawVerOBS(int c, int length, int x, int y, int& count) {
 	for (int i = 0; i < length; i++) {
 		gotoXY(x, y + i);
-		cout << c;
+		cout << (char)c;
 		OBSTACLE[count] = { x,y + i };
 		count++;
 	}
 }
-void drawHorOBS(char c, int length, int x, int y, int& count) {
+void drawHorOBS(int c, int length, int x, int y, int& count) {
 	for (int i = 0; i < length; i++) {
 		gotoXY(x + i, y);
-		cout << c;
+		cout << (char)c;
 		OBSTACLE[count] = { x,y + i };
 		count++;
 	}
@@ -737,17 +741,6 @@ void Level5(int& count)
 		drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 	}
 }
-/*
-bool TouchBody()//Cham than
-{
-	for (int i = SIZE_SNAKE - 3; i >= 0; --i)
-	{
-		if (snake[SIZE_SNAKE - 1].x == snake[i].x && snake[SIZE_SNAKE - 1].y == snake[i].y)
-			return false;
-	}
-	return true;
-}
-*/
 bool TouchBody(int x, int y)//Cham than
 {
 	for (int i = SIZE_SNAKE - 3; i >= 0; --i)
@@ -759,21 +752,15 @@ bool TouchBody(int x, int y)//Cham than
 }
 void MoveRight()
 {
-	bool eat = 0;
-	if (snake[SIZE_SNAKE - 1].x + 1 == WIDTH_CONSOLE)
-	{
-		ProcessDead();
-	}
-	else if (TouchBody(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0)
+	if (snake[SIZE_SNAKE - 1].x + 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0)
 	{
 		ProcessDead();
 	}
 	else if (snake[SIZE_SNAKE - 1].x + 1 == food[FOOD_INDEX].x && snake[SIZE_SNAKE - 1].y == food[FOOD_INDEX].y)
 	{
 		Eat();
-		eat = 1;
 	}
-	else if (!eat) {
+	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
 		{
 			snake[i].x = snake[i + 1].x;
@@ -784,21 +771,15 @@ void MoveRight()
 }
 void MoveLeft()
 {
-	bool eat = 0;
-	if (snake[SIZE_SNAKE - 1].x - 1 == 0)
-	{
-		ProcessDead();
-	}
-	else if (TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
+	if (snake[SIZE_SNAKE - 1].x - 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
 	{
 		ProcessDead();
 	}
 	else if (snake[SIZE_SNAKE - 1].x - 1 == food[FOOD_INDEX].x && snake[SIZE_SNAKE - 1].y == food[FOOD_INDEX].y)
 	{
 		Eat();
-		eat = 1;
 	}
-	else if (!eat) {
+	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
 		{
 			snake[i].x = snake[i + 1].x;
@@ -809,21 +790,15 @@ void MoveLeft()
 }
 void MoveUp()
 {
-	bool eat = 0;
-	if (snake[SIZE_SNAKE - 1].y - 1 == 0)
-	{
-		ProcessDead();
-	}
-	else if (TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
+	if (snake[SIZE_SNAKE - 1].y - 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
 	{
 		ProcessDead();
 	}
 	else if (snake[SIZE_SNAKE - 1].x == food[FOOD_INDEX].x && snake[SIZE_SNAKE - 1].y - 1 == food[FOOD_INDEX].y)
 	{
 		Eat();
-		eat = 1;
 	}
-	else if (!eat) {
+	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
 		{
 			snake[i].x = snake[i + 1].x;
@@ -834,21 +809,15 @@ void MoveUp()
 }
 void MoveDown()
 {
-	bool eat = 0;
-	if (snake[SIZE_SNAKE - 1].y + 1 == HEIGH_CONSOLE)
-	{
-		ProcessDead();
-	}
-	else if (TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0)
+	if (snake[SIZE_SNAKE - 1].y + 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0)
 	{
 		ProcessDead();
 	}
 	else if (snake[SIZE_SNAKE - 1].x == food[FOOD_INDEX].x && snake[SIZE_SNAKE - 1].y + 1 == food[FOOD_INDEX].y)
 	{
 		Eat();
-		eat = 1;
 	}
-	else if (!eat) {
+	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
 		{
 			snake[i].x = snake[i + 1].x;
@@ -1051,7 +1020,6 @@ void SaveGame(const char* filePath, int CHAR_LOCK, int MOVING, int SPEED, int LE
 {
 	ofstream fOut;
 	fOut.open(filePath);
-
 	fOut << CHAR_LOCK << endl;
 	fOut << MOVING << endl;
 	fOut << SPEED << endl;
@@ -1067,7 +1035,7 @@ void SaveGame(const char* filePath, int CHAR_LOCK, int MOVING, int SPEED, int LE
 }
 void StartGame() {
 	system("cls");
-	ResetData(); // Intialize original data
+	ResetData();
 	drawGame();
 	STATE = 1;//Start running Thread
 }
