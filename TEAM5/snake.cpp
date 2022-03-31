@@ -875,8 +875,8 @@ bool IsValid(int x, int y) {
 	for (int i = 0; i < SIZE_SNAKE; i++) {
 		if ((snake[i].x == x && snake[i].y == y) || (OBSTACLE[i].x == x && OBSTACLE[i].y == y))
 			return false;
-		return true;
 	}
+	return true;
 }
 void DrawSnake() {
 	setColor(0, 10);
