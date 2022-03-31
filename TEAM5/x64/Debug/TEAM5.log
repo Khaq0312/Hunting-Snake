@@ -1,0 +1,23 @@
+﻿  snake.cpp
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(641,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(752,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(753,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(757,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(758,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(759,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(760,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(761,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(762,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(763,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(764,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(769,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(770,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(771,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(772,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(778,14): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(779,14): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(915,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(916,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(917,13): warning C4309: 'argument': truncation of constant value
+C:\Users\vicuo\source\repos\Hunting-Snake\TEAM5\snake.cpp(945): warning C4715: 'IsValid': not all control paths return a value
+  TEAM5.vcxproj -> C:\Users\vicuo\source\repos\Hunting-Snake\x64\Debug\TEAM5.exe

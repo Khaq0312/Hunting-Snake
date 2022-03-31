@@ -22,6 +22,7 @@ struct HIGHSCORE {
 #define MAX_FILE_GAME 5
 static int HEIGHT_WINDOW = 30, WIDTH_WINDOW = 110;
 int LEVEL;
+int OBScount = 0;
 int SCORE;
 #define MAX_SPEED 3
 POINT snake[MAX_SIZE_SNAKE];
@@ -103,6 +104,21 @@ void drawBoard(int x, int y, int width, int height) {
 	for (int i = y + 1; i < height + y; i++) {
 		gotoXY(x, i); cout << (char)219;
 		gotoXY(x + width, i); cout << (char)219;
+	}
+	switch (LEVEL)
+	{
+	case 1:
+		Level2(OBScount);
+		break;
+	case 2:
+		Level3(OBScount);
+		break;
+	case 3:
+		Level4(OBScount);
+		break;
+	case 4:
+		Level5(OBScount);
+		break;
 	}
 	gotoXY(0, 0);
 }
@@ -619,6 +635,7 @@ void drawAboutUs() {
 		y++;
 	}
 }
+
 void GenerateFood() {
 	int x, y;
 	srand(time(NULL));
@@ -630,6 +647,7 @@ void GenerateFood() {
 		food[i] = { x,y };
 	}
 }
+
 void readData(string filePath) {
 	ifstream fIn;
 	fIn.open(filePath, ios::beg);
@@ -660,6 +678,7 @@ void ProcessDead() {
 	gotoXY(0, HEIGH_CONSOLE + 2);
 	printf("Dead, type y to continue or anykey to exit");
 }
+
 void Eat() {
 	snake[SIZE_SNAKE] = food[FOOD_INDEX];
 	if (FOOD_INDEX == MAX_SIZE_FOOD - 1) {
@@ -673,6 +692,23 @@ void Eat() {
 		else {
 			LEVEL++;
 			SPEED++;
+			switch (LEVEL)
+			{
+			case 1:
+				Level2(OBScount);
+				break;
+			case 2:
+				Level3(OBScount);
+				break;
+			case 3:
+				Level4(OBScount);
+				break;
+			case 4:
+				Level5(OBScount);
+				break;
+			default:
+				break;
+			}
 		}
 		GenerateFood();
 	}
@@ -965,7 +1001,7 @@ void ThreadFunc() {
 			cout << SCORE;
 			DrawFood();
 			DrawSnake();
-			Sleep(400 / SPEED);//Sleep function with SPEEED variable
+			Sleep(200 / SPEED);//Sleep function with SPEEED variable
 		}
 	}
 }
