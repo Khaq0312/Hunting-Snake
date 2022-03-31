@@ -656,23 +656,30 @@ void Eat() {
 		else {
 			LEVEL++;
 			SPEED++;
+			/*
 			switch (LEVEL)
 			{
-			case 1:
+			case 2:
 				Level2(OBScount);
 				break;
-			case 2:
+			case 3:
 				Level3(OBScount);
 				break;
-			case 3:
+			case 4:
 				Level4(OBScount);
 				break;
-			case 4:
+			case 5:
 				Level5(OBScount);
 				break;
 			default:
 				break;
 			}
+			*/
+			Level2(OBScount);
+			Level3(OBScount);
+			Level4(OBScount);
+			Level5(OBScount);
+
 		}
 		GenerateFood();
 	}
@@ -685,7 +692,7 @@ void Eat() {
 void ResetData() {
 	//Initialize the global values
 	CHAR_LOCK = 'A', MOVING = 'D', SPEED = 1; FOOD_INDEX = 0, WIDTH_CONSOLE = 70,
-		HEIGH_CONSOLE = 20, SIZE_SNAKE = 6, SCORE = 0, LEVEL = 0;
+		HEIGH_CONSOLE = 20, SIZE_SNAKE = 6, SCORE = 0, LEVEL = 1;
 	// Initialize default values for snake
 	snake[0] = { 10, 1 }; snake[1] = { 11, 1 };
 	snake[2] = { 12, 1 }; snake[3] = { 13, 1 };
@@ -705,7 +712,7 @@ void drawHorOBS(int c, int length, int x, int y, int& count) {
 	for (int i = 0; i < length; i++) {
 		gotoXY(x + i, y);
 		cout << (char)c;
-		OBSTACLE[count] = { x,y + i };
+		OBSTACLE[count] = { x + i,y };
 		count++;
 	}
 }
@@ -741,6 +748,15 @@ void Level5(int& count)
 		drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 	}
 }
+bool TouchOBS(int x, int y)
+{
+	for (int i = 0; i < OBScount; ++i)
+	{
+		if (x == OBSTACLE[i].x && y == OBSTACLE[i].y)
+			return false;
+	}
+	return true;
+}
 bool TouchBody(int x, int y)//Cham than
 {
 	for (int i = SIZE_SNAKE - 3; i >= 0; --i)
@@ -752,7 +768,8 @@ bool TouchBody(int x, int y)//Cham than
 }
 void MoveRight()
 {
-	if (snake[SIZE_SNAKE - 1].x + 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0)
+	if (snake[SIZE_SNAKE - 1].x + 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0
+		|| TouchOBS(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0)
 	{
 		ProcessDead();
 	}
@@ -771,7 +788,8 @@ void MoveRight()
 }
 void MoveLeft()
 {
-	if (snake[SIZE_SNAKE - 1].x - 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
+	if (snake[SIZE_SNAKE - 1].x - 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0
+		|| TouchOBS(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
 	{
 		ProcessDead();
 	}
@@ -790,7 +808,8 @@ void MoveLeft()
 }
 void MoveUp()
 {
-	if (snake[SIZE_SNAKE - 1].y - 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
+	if (snake[SIZE_SNAKE - 1].y - 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0
+		|| TouchOBS(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
 	{
 		ProcessDead();
 	}
@@ -809,7 +828,8 @@ void MoveUp()
 }
 void MoveDown()
 {
-	if (snake[SIZE_SNAKE - 1].y + 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0)
+	if (snake[SIZE_SNAKE - 1].y + 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0
+		|| TouchOBS(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0)
 	{
 		ProcessDead();
 	}
@@ -903,7 +923,7 @@ void ThreadFunc() {
 			cout << SCORE;
 			DrawFood();
 			DrawSnake();
-			Sleep(200 / SPEED);//Sleep function with SPEEED variable
+			Sleep(500 / SPEED);//Sleep function with SPEEED variable
 		}
 	}
 }
@@ -940,12 +960,9 @@ bool TouchGate()//Ham nay mo phong, luc ghep ham thi se chinh sua lai
 		}
 	}
 }
-
-bool ChamChuongNgaiVat() //Chua hinh dung duoc @@, trong qua trinh ghep se tim ra
-{
-
-}
 */
+
+
 void swapScore(int& x, int& y)//Doi vi tri thu tu diem
 {
 	x = x + y;
