@@ -105,21 +105,6 @@ void drawBoard(int x, int y, int width, int height) {
 		gotoXY(x, i); cout << (char)219;
 		gotoXY(x + width, i); cout << (char)219;
 	}
-	switch (LEVEL)
-	{
-	case 1:
-		Level2(OBScount);
-		break;
-	case 2:
-		Level3(OBScount);
-		break;
-	case 3:
-		Level4(OBScount);
-		break;
-	case 4:
-		Level5(OBScount);
-		break;
-	}
 	gotoXY(0, 0);
 }
 
@@ -739,6 +724,7 @@ void drawVerOBS(char c, int length, int x, int y, int& count) {
 		count++;
 	}
 }
+
 void drawHorOBS(char c, int length, int x, int y, int& count) {
 	for (int i = 0; i < length; i++) {
 		gotoXY(x + i, y);
@@ -747,11 +733,13 @@ void drawHorOBS(char c, int length, int x, int y, int& count) {
 		count++;
 	}
 }
+
 void Level2(int& count)
 {
 	drawHorOBS(220, 5, WIDTH_CONSOLE / 2 - 2, HEIGH_CONSOLE / 2, count);
 	drawVerOBS(219, 5, WIDTH_CONSOLE / 2, HEIGH_CONSOLE / 2 - 2, count);
 }
+
 void Level3(int& count)
 {
 	drawVerOBS(219, 5, 3, 3, count);
@@ -763,6 +751,7 @@ void Level3(int& count)
 	drawHorOBS(220, 5, WIDTH_CONSOLE - 7, HEIGH_CONSOLE - 3, count);
 	drawVerOBS(219, 5, WIDTH_CONSOLE - 3, HEIGH_CONSOLE - 7, count);
 }
+
 void Level4(int& count)
 {
 	int temp = rand() % 8;
@@ -771,6 +760,7 @@ void Level4(int& count)
 	drawVerOBS(219, temp, WIDTH_CONSOLE / 2, HEIGH_CONSOLE - temp, count);
 	drawHorOBS(220, temp, WIDTH_CONSOLE - temp, HEIGH_CONSOLE / 2, count);
 }
+
 void Level5(int& count)
 {
 	for (int i = 0; i < 2; i++)
@@ -779,6 +769,7 @@ void Level5(int& count)
 		drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 	}
 }
+
 /*
 bool TouchBody()//Cham than
 {
@@ -790,6 +781,7 @@ bool TouchBody()//Cham than
 	return true;
 }
 */
+
 bool TouchBody(int x, int y)//Cham than
 {
 	for (int i = SIZE_SNAKE - 3; i >= 0; --i)
@@ -799,6 +791,7 @@ bool TouchBody(int x, int y)//Cham than
 	}
 	return true;
 }
+
 void MoveRight()
 {
 	bool eat = 0;
@@ -902,6 +895,7 @@ void MoveDown()
 		snake[SIZE_SNAKE - 1].y++;
 	}
 }
+
 void DrawGate(int& count)
 {
 	POINT trigger;
@@ -916,26 +910,7 @@ void DrawGate(int& count)
 	drawVerOBS(220, 1, trigger.x - 1, trigger.y, count);
 	drawVerOBS(220, 1, trigger.x + 1, trigger.y, count);
 }
-void DrawBoard(int x, int y, int width, int height) {
-	int count = 0;
-	gotoXY(x, y);
-	cout << (char)220;
-	for (int i = 1; i < width; i++)cout << (char)220;
-	cout << (char)220;
-	gotoXY(x, height + y); cout << (char)223;
-	for (int i = 1; i < width; i++)cout << (char)223;
-	cout << (char)223;
-	for (int i = y + 1; i < height + y; i++) {
-		gotoXY(x, i); cout << (char)219;
-		gotoXY(x + width, i); cout << (char)219;
-	}
-	Level2(count);
-	Level3(count);
-	Level4(count);
-	Level5(count);
-	DrawGate(count);
-	gotoXY(0, 0);
-}
+
 bool IsValid(int x, int y) {
 	for (int i = 0; i < SIZE_SNAKE; i++) {
 		if ((snake[i].x == x && snake[i].y == y) || (OBSTACLE[i].x == x && OBSTACLE[i].y == y))
@@ -943,7 +918,6 @@ bool IsValid(int x, int y) {
 		return true;
 	}
 }
-
 
 void DrawSnake() {
 	setColor(0, 10);
@@ -959,22 +933,26 @@ void DrawSnake() {
 	}
 	setColor(0, 7);
 }
+
 void DrawFood() {
 	gotoXY(food[FOOD_INDEX].x, food[FOOD_INDEX].y);
 	setColor(0, 4);
 	cout << (char)3;
 	setColor(0, 7);
 }
+
 void ClearSnake() {
 	for (int i = 0; i < SIZE_SNAKE; i++) {
 		gotoXY(snake[i].x, snake[i].y);
 		cout << " ";
 	}
 }
+
 void ClearFood() {
 	gotoXY(food[FOOD_INDEX].x, food[FOOD_INDEX].y);
 	cout << " ";
 }
+
 void ThreadFunc() {
 	while (1) {
 		if (STATE == 1) {//If my snake is alive
@@ -1005,6 +983,7 @@ void ThreadFunc() {
 		}
 	}
 }
+
 /*
 bool TouchGate()//Ham nay mo phong, luc ghep ham thi se chinh sua lai
 {
@@ -1044,6 +1023,7 @@ bool ChamChuongNgaiVat() //Chua hinh dung duoc @@, trong qua trinh ghep se tim r
 
 }
 */
+
 void swapScore(int& x, int& y)//Doi vi tri thu tu diem
 {
 	x = x + y;
@@ -1058,7 +1038,6 @@ void swapName(string& x, string& y)//Doi vi tri thu tu nguoi choi
 	y = temp;
 }
 
-
 bool checkScore(HIGHSCORE a[], int n, int score)//Kiem tra diem co nam trong top 5 khong
 {
 	for (int i = 0; i < n; ++i)
@@ -1068,7 +1047,6 @@ bool checkScore(HIGHSCORE a[], int n, int score)//Kiem tra diem co nam trong top
 	}
 	return 0;
 }
-
 
 void saveHighScore(HIGHSCORE a[], int n, int score)//Luu diem nam trong top 5
 {
@@ -1141,12 +1119,14 @@ void SaveGame(const char* filePath, int CHAR_LOCK, int MOVING, int SPEED, int LE
 	}
 	fOut.close();
 }
+
 void StartGame() {
 	system("cls");
 	ResetData(); // Intialize original data
 	drawGame();
 	STATE = 1;//Start running Thread
 }
+
 int main() {
 	//readFileGame("FileGame.txt");
 	//readHighScore("HighScore.txt");
