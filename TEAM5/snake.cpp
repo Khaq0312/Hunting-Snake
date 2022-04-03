@@ -98,7 +98,6 @@ void drawBoard(int x, int y, int width, int height) {
 		gotoXY(x + width, i); cout << (char)219;
 	}
 	gotoXY(0, 0);
-
 }
 void setColor(int background_color, int text_color) {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -669,38 +668,36 @@ void Eat() {
 		else {
 			LEVEL++;
 			SPEED++;
+			/*
 			switch (LEVEL)
 			{
-			case 1:
+			case 2:
 				Level2(OBScount);
 				break;
-			case 2:
+			case 3:
 				Level3(OBScount);
 				break;
-			case 3:
+			case 4:
 				Level4(OBScount);
 				break;
-			case 4:
+			case 5:
 				Level5(OBScount);
 				break;
 			default:
 				break;
-			}
-			//LEVEL++;
-			//SPEED++;
-
-
-			/*
+			}*/
 			Level2(OBScount);
 			Level3(OBScount);
 			Level4(OBScount);
 			Level5(OBScount);
-			*/
-		}
+		if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
+	  else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
+		GenerateFood();
 	}
 	else {
 		FOOD_INDEX++;
 		SIZE_SNAKE++;
+		GenerateFood();
 	}
 	if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
 	else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
@@ -735,7 +732,7 @@ void drawHorOBS(int c, int length, int x, int y, int& count) {
 	for (int i = 0; i < length; i++) {
 		gotoXY(x + i, y);
 		cout << (char)c;
-		OBSTACLE[count] = { x,y + i };
+		OBSTACLE[count] = { x + i,y };
 		count++;
 	}
 }
@@ -812,7 +809,8 @@ bool TouchBody(int x, int y)//Cham than
 }
 void MoveRight()
 {
-	if (snake[SIZE_SNAKE - 1].x + 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0)
+	if (snake[SIZE_SNAKE - 1].x + 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0
+		|| TouchOBS(snake[SIZE_SNAKE - 1].x + 1, snake[SIZE_SNAKE - 1].y) == 0)
 	{
 		ProcessDead();
 	}
@@ -831,6 +829,7 @@ void MoveRight()
 }
 void MoveLeft()
 {
+
 	if (snake[SIZE_SNAKE - 1].x - 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
 	if (snake[SIZE_SNAKE - 1].x - 1 == 0 || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0
 		|| TouchOBS(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
@@ -851,7 +850,7 @@ void MoveLeft()
 	}
 }
 void MoveUp()
-{
+
 	if (snake[SIZE_SNAKE - 1].y - 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
 	if (snake[SIZE_SNAKE - 1].y - 1 == 0 || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0
 		|| TouchOBS(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
@@ -873,7 +872,8 @@ void MoveUp()
 }
 void MoveDown()
 {
-	if (snake[SIZE_SNAKE - 1].y + 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0)
+	if (snake[SIZE_SNAKE - 1].y + 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0
+		|| TouchOBS(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y + 1) == 0)
 	{
 		ProcessDead();
 	}
@@ -984,6 +984,20 @@ void DrawSnake() {
 	}
 	setColor(0, 7);
 }
+//void DrawSnake() {
+//	setColor(0, 10);
+//	char ms[25] = "211274782112762321127237";
+//	int j = 0;
+//	for (int i = SIZE_SNAKE - 1; i >= 0; i--) {
+//		gotoXY(snake[i].x, snake[i].y);
+//		cout << ms[j];
+//		j++;
+//		if (j == 24) {
+//			j = 0;
+//		}
+//	}
+//	setColor(0, 7);
+//}
 void DrawFood() {
 	gotoXY(food[FOOD_INDEX].x, food[FOOD_INDEX].y);
 	setColor(0, 4);
@@ -1061,12 +1075,9 @@ bool TouchGate()//Ham nay mo phong, luc ghep ham thi se chinh sua lai
 		}
 	}
 }
-
-bool ChamChuongNgaiVat() //Chua hinh dung duoc @@, trong qua trinh ghep se tim ra
-{
-
-}
 */
+
+
 void swapScore(int& x, int& y)//Doi vi tri thu tu diem
 {
 	x = x + y;
