@@ -9,3 +9,4 @@ void moveGate();
 void ClearFood();
 void DrawFood();
 void clearGate();
+bool IsValidGate(int x, int y);

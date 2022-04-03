@@ -680,18 +680,20 @@ void Eat() {
 		}
 		//if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
 		//else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
-		GenerateFood();
+
 	}
 	else {
 		FOOD_INDEX++;
 		SIZE_SNAKE++;
 	}
 	SCORE++;
+	/*
 	int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
 	gotoXY(x + 10, y + 1);
 	cout << LEVEL;
 	gotoXY(x + 37, y + 1);
 	cout << SCORE;
+	*/
 }
 void ResetData() {
 	//Initialize the global values
@@ -893,6 +895,7 @@ void moveGate() {
 	snake[SIZE_SNAKE - 1].y++;
 	LEVEL++; SPEED++;
 	SCORE += 5;
+	/*
 	switch (LEVEL)
 	{
 	case 2:
@@ -910,7 +913,11 @@ void moveGate() {
 	default:
 		break;
 	}
-	GenerateFood();
+	*/
+	Level2(OBScount);
+	Level3(OBScount);
+	Level4(OBScount);
+	Level5(OBScount);
 }
 void clearGate() {
 	triggerCount = 0;
@@ -919,6 +926,7 @@ void clearGate() {
 	drawHorLine(219, 3, triggerIn.x - 1, triggerIn.y);
 	setColor(0, 7);
 	triggerIn = { 0,0 };
+	GenerateFood();
 }
 void DrawGateIn(int& count)
 {
@@ -927,7 +935,7 @@ void DrawGateIn(int& count)
 	{
 		triggerIn.x = rand() % (WIDTH_CONSOLE - 5) + 2;
 		triggerIn.y = rand() % (HEIGH_CONSOLE - 7) + 4;
-	} while (!IsValid(triggerIn.x, triggerIn.y));
+	} while (!IsValidGate(triggerIn.x, triggerIn.y));
 	gotoXY(triggerIn.x, triggerIn.y);
 	cout << 'x';
 	drawHorTRIG(219, 3, triggerIn.x - 1, triggerIn.y + 1, count);
@@ -948,6 +956,20 @@ bool IsValid(int x, int y) {
 	for (int i = 0; i < triggerCount; i++) {
 		if (TRIGGER[i].x == x && TRIGGER[i].y == y)
 			return false;
+	}
+	return true;
+}
+bool IsValidGate(int x, int y) {
+	for (int j = -1; j <= 1; j++)
+	{
+		for (int i = 0; i < SIZE_SNAKE; i++) {
+			if (snake[i].x == x + j && snake[i].y == y + j)
+				return false;
+		}
+		for (int i = 0; i < OBScount; i++) {
+			if (OBSTACLE[i].x == x + j && OBSTACLE[i].y == y + j)
+				return false;
+		}
 	}
 	return true;
 }
@@ -1004,6 +1026,11 @@ void ThreadFunc() {
 				DrawFood();
 			}
 			DrawSnake();
+			int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
+			gotoXY(x + 10, y + 1);
+			cout << LEVEL;
+			gotoXY(x + 37, y + 1);
+			cout << SCORE;
 			Sleep(400 / SPEED);//Sleep function with SPEEED variable
 		}
 	}
