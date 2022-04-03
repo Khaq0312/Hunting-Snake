@@ -35,11 +35,10 @@ int FOOD_INDEX;
 int SIZE_SNAKE;
 int STATE;
 HIGHSCORE highscore[MAX_HIGH_SCORE]; int nHighscore = 0;
+
 string filegame[MAX_FILE_GAME];
 int nFileGame = 0;
-POINT triggerIn = { 0,0 };
-int triggerCount;
-POINT TRIGGER[10];
+
 //Function exit game
 void ExitGame(HANDLE t) {
 	system("cls");
@@ -98,7 +97,7 @@ void drawBoard(int x, int y, int width, int height) {
 		gotoXY(x + width, i); cout << (char)219;
 	}
 	gotoXY(0, 0);
-
+	
 }
 void setColor(int background_color, int text_color) {
 	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -110,12 +109,6 @@ void setColor(int background_color, int text_color) {
 void drawVerLine(int c, int length, int x, int y) {
 	for (int i = 0; i < length; i++) {
 		gotoXY(x, y + i);
-		cout << (char)c;
-	}
-}
-void drawHorLine(int c, int length, int x, int y) {
-	for (int i = 0; i < length; i++) {
-		gotoXY(x + i, y);
 		cout << (char)c;
 	}
 }
@@ -333,14 +326,10 @@ void drawGame() {
 	y++;
 	gotoXY(x + 3, y);
 	setColor(0, 14);
-	cout << "LEVEL: ";
-	setColor(0, 7);
-	cout << LEVEL;
+	cout << "LEVEL: "; // ======== level duoc cap nhat trong ham ThreadFunc() =========
 	gotoXY(x + 30, y);
-	setColor(0, 14);
-	cout << "SCORE: ";
+	cout << "SCORE: "; // ======== score duoc cap nhat trong ham ThreadFunc() =========
 	setColor(0, 7);
-	cout << SCORE;
 }
 // Chuc nang: doc danh sach ten cac file luu data game cua nguoi choi
 void readFileGame(const char* filePath) {
@@ -660,47 +649,59 @@ void Eat() {
 	if (FOOD_INDEX == MAX_SIZE_FOOD - 1) {
 		FOOD_INDEX = 0;
 		SIZE_SNAKE++;
-		DrawGateIn(triggerCount);
 		if (LEVEL == MAX_LEVEL) {
 			LEVEL = 1;
 			SPEED = SPEED - 3; // tang 1 so voi speed ban dau cua vong truoc
 			SIZE_SNAKE = 3;
 		}
 		else {
-			//LEVEL++;
-			//SPEED++;
-
-
+			LEVEL++;
+			SPEED++;
 			/*
+			switch (LEVEL)
+			{
+			case 2:
+				Level2(OBScount);
+				break;
+			case 3:
+				Level3(OBScount);
+				break;
+			case 4:
+				Level4(OBScount);
+				break;
+			case 5:
+				Level5(OBScount);
+				break;
+			default:
+				break;
+			}
+			*/
 			Level2(OBScount);
 			Level3(OBScount);
 			Level4(OBScount);
 			Level5(OBScount);
-			*/
+
 		}
-		//if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
-		//else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
+		if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
+	  else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
 		GenerateFood();
+
 	}
 	else {
 		FOOD_INDEX++;
 		SIZE_SNAKE++;
+		GenerateFood();
 	}
 	SCORE++;
-	int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
-	gotoXY(x + 10, y + 1);
-	cout << LEVEL;
-	gotoXY(x + 37, y + 1);
-	cout << SCORE;
 }
 void ResetData() {
 	//Initialize the global values
 	CHAR_LOCK = 'A', MOVING = 'D', SPEED = 1; FOOD_INDEX = 0, WIDTH_CONSOLE = 70,
-		HEIGH_CONSOLE = 20, SIZE_SNAKE = 3, SCORE = 0, LEVEL = 1;
-	OBScount = 0; triggerCount = 0; triggerIn = { 0,0 };
+		HEIGH_CONSOLE = 20, SIZE_SNAKE = 6, SCORE = 0, LEVEL = 1;
 	// Initialize default values for snake
 	snake[0] = { 10, 1 }; snake[1] = { 11, 1 };
-	snake[2] = { 12, 1 };
+	snake[2] = { 12, 1 }; snake[3] = { 13, 1 };
+	snake[4] = { 14, 1 }; snake[5] = { 15, 1 };
 	GenerateFood();//Create food array
 }
 //Ham moi/chinh sua
@@ -717,22 +718,6 @@ void drawHorOBS(int c, int length, int x, int y, int& count) {
 		gotoXY(x + i, y);
 		cout << (char)c;
 		OBSTACLE[count] = { x + i,y };
-		count++;
-	}
-}
-void drawVerTRIG(int c, int length, int x, int y, int& count) {
-	for (int i = 0; i < length; i++) {
-		gotoXY(x, y + i);
-		cout << (char)c;
-		TRIGGER[count] = { x,y + i };
-		count++;
-	}
-}
-void drawHorTRIG(int c, int length, int x, int y, int& count) {
-	for (int i = 0; i < length; i++) {
-		gotoXY(x + i, y);
-		cout << (char)c;
-		TRIGGER[count] = { x + i,y };
 		count++;
 	}
 }
@@ -764,7 +749,7 @@ void Level5(int& count)
 {
 	for (int i = 0; i < 2; i++)
 	{
-		drawVerOBS(219, 3, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
+		drawVerOBS(219, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 		drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 	}
 }
@@ -773,11 +758,6 @@ bool TouchOBS(int x, int y)
 	for (int i = 0; i < OBScount; ++i)
 	{
 		if (x == OBSTACLE[i].x && y == OBSTACLE[i].y)
-			return false;
-	}
-	for (int i = 0; i < triggerCount; ++i)
-	{
-		if (x == TRIGGER[i].x && y == TRIGGER[i].y)
 			return false;
 	}
 	return true;
@@ -813,7 +793,7 @@ void MoveRight()
 }
 void MoveLeft()
 {
-	if (snake[SIZE_SNAKE - 1].x - 1 == 0 || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0
+	if (snake[SIZE_SNAKE - 1].x - 1 == WIDTH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0
 		|| TouchOBS(snake[SIZE_SNAKE - 1].x - 1, snake[SIZE_SNAKE - 1].y) == 0)
 	{
 		ProcessDead();
@@ -833,7 +813,7 @@ void MoveLeft()
 }
 void MoveUp()
 {
-	if (snake[SIZE_SNAKE - 1].y - 1 == 0 || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0
+	if (snake[SIZE_SNAKE - 1].y - 1 == HEIGH_CONSOLE || TouchBody(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0
 		|| TouchOBS(snake[SIZE_SNAKE - 1].x, snake[SIZE_SNAKE - 1].y - 1) == 0)
 	{
 		ProcessDead();
@@ -862,12 +842,6 @@ void MoveDown()
 	{
 		Eat();
 	}
-	else if (triggerIn.x != 0 && triggerIn.y != 0 && snake[SIZE_SNAKE - 1].x == triggerIn.x && snake[SIZE_SNAKE - 1].y + 1 == triggerIn.y) {
-		moveGate();
-	}
-	else if (triggerIn.x != 0 && triggerIn.y != 0 && snake[0].x == triggerIn.x && snake[0].y + 1 == triggerIn.y) {
-		clearGate();
-	}
 	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
 		{
@@ -877,76 +851,23 @@ void MoveDown()
 		snake[SIZE_SNAKE - 1].y++;
 	}
 }
-
-void moveGate() {
-	for (int i = 0; i < SIZE_SNAKE - 1; ++i)
-	{
-		snake[i].x = snake[i + 1].x;
-		snake[i].y = snake[i + 1].y;
-	}
-	snake[SIZE_SNAKE - 1] = { WIDTH_CONSOLE - 8,1 };
-	for (int i = 0; i < SIZE_SNAKE - 1; ++i)
-	{
-		snake[i].x = snake[i + 1].x;
-		snake[i].y = snake[i + 1].y;
-	}
-	snake[SIZE_SNAKE - 1].y++;
-	LEVEL++; SPEED++;
-	SCORE += 5;
-	switch (LEVEL)
-	{
-	case 2:
-		Level2(OBScount);
-		break;
-	case 3:
-		Level3(OBScount);
-		break;
-	case 4:
-		Level4(OBScount);
-		break;
-	case 5:
-		Level5(OBScount);
-		break;
-	default:
-		break;
-	}
-	GenerateFood();
-}
-void clearGate() {
-	triggerCount = 0;
-	setColor(0, 0);
-	drawHorLine(219, 3, triggerIn.x - 1, triggerIn.y + 1);
-	drawHorLine(219, 3, triggerIn.x - 1, triggerIn.y);
-	setColor(0, 7);
-	triggerIn = { 0,0 };
-}
-void DrawGateIn(int& count)
+void DrawGate(int& count)
 {
-	setColor(0, 9);
+	POINT trigger;
 	do
 	{
-		triggerIn.x = rand() % (WIDTH_CONSOLE - 5) + 2;
-		triggerIn.y = rand() % (HEIGH_CONSOLE - 7) + 4;
-	} while (!IsValid(triggerIn.x, triggerIn.y));
-	gotoXY(triggerIn.x, triggerIn.y);
+		trigger.x = rand() % WIDTH_CONSOLE;
+		trigger.y = rand() % HEIGH_CONSOLE;
+	} while (!IsValid(trigger.x, trigger.y));
+	gotoXY(trigger.x, trigger.y);
 	cout << 'x';
-	drawHorTRIG(219, 3, triggerIn.x - 1, triggerIn.y + 1, count);
-	drawVerTRIG(219, 1, triggerIn.x - 1, triggerIn.y, count);
-	drawVerTRIG(219, 1, triggerIn.x + 1, triggerIn.y, count);
-	setColor(0, 7);
+	drawHorOBS(219, 3, trigger.x - 1, trigger.y + 1, count);
+	drawVerOBS(220, 1, trigger.x - 1, trigger.y, count);
+	drawVerOBS(220, 1, trigger.x + 1, trigger.y, count);
 }
-
 bool IsValid(int x, int y) {
 	for (int i = 0; i < SIZE_SNAKE; i++) {
-		if (snake[i].x == x && snake[i].y == y)
-			return false;
-	}
-	for (int i = 0; i < OBScount; i++) {
-		if (OBSTACLE[i].x == x && OBSTACLE[i].y == y)
-			return false;
-	}
-	for (int i = 0; i < triggerCount; i++) {
-		if (TRIGGER[i].x == x && TRIGGER[i].y == y)
+		if ((snake[i].x == x && snake[i].y == y) || (OBSTACLE[i].x == x && OBSTACLE[i].y == y))
 			return false;
 	}
 	return true;
@@ -965,6 +886,20 @@ void DrawSnake() {
 	}
 	setColor(0, 7);
 }
+//void DrawSnake() {
+//	setColor(0, 10);
+//	char ms[25] = "211274782112762321127237";
+//	int j = 0;
+//	for (int i = SIZE_SNAKE - 1; i >= 0; i--) {
+//		gotoXY(snake[i].x, snake[i].y);
+//		cout << ms[j];
+//		j++;
+//		if (j == 24) {
+//			j = 0;
+//		}
+//	}
+//	setColor(0, 7);
+//}
 void DrawFood() {
 	gotoXY(food[FOOD_INDEX].x, food[FOOD_INDEX].y);
 	setColor(0, 4);
@@ -1000,11 +935,14 @@ void ThreadFunc() {
 				MoveDown();
 				break;
 			}
-			if (triggerIn.x == 0 && triggerIn.y == 0) {
-				DrawFood();
-			}
+			int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
+			gotoXY(x + 10, y + 1);
+			cout << LEVEL;
+			gotoXY(x + 37, y + 1);
+			cout << SCORE;
+			DrawFood();
 			DrawSnake();
-			Sleep(400 / SPEED);//Sleep function with SPEEED variable
+			Sleep(500 / SPEED);//Sleep function with SPEEED variable
 		}
 	}
 }
