@@ -678,13 +678,14 @@ void Eat() {
 			Level5(OBScount);
 			*/
 		}
+		//if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
+		//else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
+		GenerateFood();
 	}
 	else {
 		FOOD_INDEX++;
 		SIZE_SNAKE++;
 	}
-	if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
-	else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
 	SCORE++;
 	int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
 	gotoXY(x + 10, y + 1);
