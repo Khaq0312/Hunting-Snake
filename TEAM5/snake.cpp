@@ -682,6 +682,9 @@ void Eat() {
 			Level5(OBScount);
 
 		}
+		if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
+	  else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
+		GenerateFood();
 
 	}
 	else {
