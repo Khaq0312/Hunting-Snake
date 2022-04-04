@@ -750,6 +750,7 @@ void Level3(int& count)
 }
 void Level4(int& count)
 {
+	//int temp = rand() % 3 + 1;
 	int temp = rand() % 8;
 	drawVerOBS(219, temp, WIDTH_CONSOLE / 2, 1, count);
 	drawHorOBS(220, temp, 1, HEIGH_CONSOLE / 2, count);
@@ -760,6 +761,8 @@ void Level5(int& count)
 {
 	for (int i = 0; i < 2; i++)
 	{
+		//drawVerOBS(219, 3, rand() % (WIDTH_CONSOLE - 10) + 1, rand() % (HEIGH_CONSOLE - 10) + 1, count);
+		//drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 10) + 1, rand() % (HEIGH_CONSOLE - 10) + 1, count);
 		drawVerOBS(219, 3, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 		drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 	}
@@ -798,6 +801,9 @@ void MoveRight()
 	{
 		Eat();
 	}
+	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
+		clearGate();
+	}
 	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
 		{
@@ -818,6 +824,9 @@ void MoveLeft()
 	{
 		Eat();
 	}
+	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
+		clearGate();
+	}
 	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
 		{
@@ -837,6 +846,9 @@ void MoveUp()
 	else if (snake[SIZE_SNAKE - 1].x == food[FOOD_INDEX].x && snake[SIZE_SNAKE - 1].y - 1 == food[FOOD_INDEX].y)
 	{
 		Eat();
+	}
+	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
+		clearGate();
 	}
 	else {
 		for (int i = 0; i < SIZE_SNAKE - 1; ++i)
@@ -861,7 +873,7 @@ void MoveDown()
 	else if (trigger.x != 0 && trigger.y != 0 && snake[SIZE_SNAKE - 1].x == trigger.x && snake[SIZE_SNAKE - 1].y + 1 == trigger.y) {
 		moveGate();
 	}
-	else if (snake[0].x == trigger.x && snake[0].y + 1 == trigger.y) {
+	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
 		clearGate();
 	}
 	else {
@@ -881,6 +893,12 @@ void moveGate() {
 		snake[i].y = snake[i + 1].y;
 	}
 	snake[SIZE_SNAKE - 1] = { WIDTH_CONSOLE - 8,1 };
+	for (int i = 0; i < SIZE_SNAKE - 1; ++i)
+	{
+		snake[i].x = snake[i + 1].x;
+		snake[i].y = snake[i + 1].y;
+	}
+	snake[SIZE_SNAKE - 1].y++;
 	if (LEVEL == MAX_LEVEL) {
 		LEVEL = 1;
 		SPEED = SPEED - 3; // tang 1 so voi speed ban dau cua vong truoc
@@ -890,10 +908,9 @@ void moveGate() {
 		LEVEL++; SPEED++;
 		SCORE += 5;
 	}
-
+	triggerCount = 1; // Dieu kien gia dinh de xac nhan ran da di qua cong
 }
 void clearGate() {
-
 	triggerCount = 0;
 	setColor(0, 0);
 	drawHorLine(219, 3, trigger.x - 1, trigger.y + 1);
@@ -918,6 +935,7 @@ void clearGate() {
 	default:
 		break;
 	}
+
 }
 bool IsValidGate(int x, int y) {
 	for (int j = -1; j <= 1; j++)
@@ -1000,7 +1018,7 @@ void ClearFood() {
 	cout << " ";
 }
 void ThreadFunc() {
-	int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
+	int x, y;
 	while (1) {
 		if (STATE == 1) {//If my snake is alive
 			ClearSnake();
@@ -1021,11 +1039,12 @@ void ThreadFunc() {
 			}
 			if (trigger.x == 0 && trigger.y == 0) DrawFood();
 			DrawSnake();
+			x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
 			gotoXY(x + 10, y + 1);
 			cout << LEVEL;
 			gotoXY(x + 37, y + 1);
 			cout << SCORE;
-			Sleep(800 / SPEED);//Sleep function with SPEEED variable
+			Sleep(400 / SPEED);//Sleep function with SPEEED variable
 		}
 	}
 }
