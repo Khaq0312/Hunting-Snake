@@ -15,7 +15,7 @@ struct HIGHSCORE {
 	int score = 0;
 };
 #define MAX_SIZE_SNAKE 28
-#define MAX_SIZE_FOOD 5
+#define MAX_SIZE_FOOD 1
 #define MAX_LEVEL 5
 #define MAX_HIGH_SCORE 5
 #define MAX_FILE_GAME 5
@@ -37,7 +37,7 @@ int STATE;
 HIGHSCORE highscore[MAX_HIGH_SCORE]; int nHighscore = 0;
 string filegame[MAX_FILE_GAME];
 int nFileGame = 0;
-POINT triggerIn = { 0,0 };
+POINT trigger = { 0,0 };
 int triggerCount;
 POINT TRIGGER[10];
 //Function exit game
@@ -661,6 +661,7 @@ void Eat() {
 		FOOD_INDEX = 0;
 		SIZE_SNAKE++;
 		DrawGateIn(triggerCount);
+		/*
 		if (LEVEL == MAX_LEVEL) {
 			LEVEL = 1;
 			SPEED = SPEED - 3; // tang 1 so voi speed ban dau cua vong truoc
@@ -670,34 +671,29 @@ void Eat() {
 			//LEVEL++;
 			//SPEED++;
 
-
-			/*
 			Level2(OBScount);
 			Level3(OBScount);
 			Level4(OBScount);
 			Level5(OBScount);
-			*/
+
 		}
-		//if (triggerIn.x == 0 && triggerIn.y == 0) GenerateFood();
-		//else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
-		GenerateFood();
+
+		//GenerateFood();
+	*/
 	}
 	else {
 		FOOD_INDEX++;
 		SIZE_SNAKE++;
 	}
+	//if (trigger.x == 0 && trigger.y == 0) GenerateFood();
+	//else food[FOOD_INDEX] = { 0,HEIGH_CONSOLE + 1 };
 	SCORE++;
-	int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
-	gotoXY(x + 10, y + 1);
-	cout << LEVEL;
-	gotoXY(x + 37, y + 1);
-	cout << SCORE;
 }
 void ResetData() {
 	//Initialize the global values
 	CHAR_LOCK = 'A', MOVING = 'D', SPEED = 1; FOOD_INDEX = 0, WIDTH_CONSOLE = 70,
 		HEIGH_CONSOLE = 20, SIZE_SNAKE = 3, SCORE = 0, LEVEL = 1;
-	OBScount = 0; triggerCount = 0; triggerIn = { 0,0 };
+	OBScount = 0; triggerCount = 0; trigger = { 0,0 };
 	// Initialize default values for snake
 	snake[0] = { 10, 1 }; snake[1] = { 11, 1 };
 	snake[2] = { 12, 1 };
@@ -862,10 +858,10 @@ void MoveDown()
 	{
 		Eat();
 	}
-	else if (triggerIn.x != 0 && triggerIn.y != 0 && snake[SIZE_SNAKE - 1].x == triggerIn.x && snake[SIZE_SNAKE - 1].y + 1 == triggerIn.y) {
+	else if (trigger.x != 0 && trigger.y != 0 && snake[SIZE_SNAKE - 1].x == trigger.x && snake[SIZE_SNAKE - 1].y + 1 == trigger.y) {
 		moveGate();
 	}
-	else if (triggerIn.x != 0 && triggerIn.y != 0 && snake[0].x == triggerIn.x && snake[0].y + 1 == triggerIn.y) {
+	else if (snake[0].x == trigger.x && snake[0].y + 1 == trigger.y) {
 		clearGate();
 	}
 	else {
@@ -885,14 +881,26 @@ void moveGate() {
 		snake[i].y = snake[i + 1].y;
 	}
 	snake[SIZE_SNAKE - 1] = { WIDTH_CONSOLE - 8,1 };
-	for (int i = 0; i < SIZE_SNAKE - 1; ++i)
-	{
-		snake[i].x = snake[i + 1].x;
-		snake[i].y = snake[i + 1].y;
+	if (LEVEL == MAX_LEVEL) {
+		LEVEL = 1;
+		SPEED = SPEED - 3; // tang 1 so voi speed ban dau cua vong truoc
+		SIZE_SNAKE = 3;
 	}
-	snake[SIZE_SNAKE - 1].y++;
-	LEVEL++; SPEED++;
-	SCORE += 5;
+	else {
+		LEVEL++; SPEED++;
+		SCORE += 5;
+	}
+
+}
+void clearGate() {
+
+	triggerCount = 0;
+	setColor(0, 0);
+	drawHorLine(219, 3, trigger.x - 1, trigger.y + 1);
+	drawHorLine(219, 3, trigger.x - 1, trigger.y);
+	setColor(0, 7);
+	trigger = { 0,0 };
+	GenerateFood();
 	switch (LEVEL)
 	{
 	case 2:
@@ -910,29 +918,38 @@ void moveGate() {
 	default:
 		break;
 	}
-	GenerateFood();
 }
-void clearGate() {
-	triggerCount = 0;
-	setColor(0, 0);
-	drawHorLine(219, 3, triggerIn.x - 1, triggerIn.y + 1);
-	drawHorLine(219, 3, triggerIn.x - 1, triggerIn.y);
-	setColor(0, 7);
-	triggerIn = { 0,0 };
+bool IsValidGate(int x, int y) {
+	for (int j = -1; j <= 1; j++)
+	{
+		for (int i = 0; i < SIZE_SNAKE; i++) {
+			if (snake[i].x == x + j && snake[i].y == y + j)
+				return false;
+		}
+		for (int i = 0; i < OBScount; i++) {
+			if (OBSTACLE[i].x == x + j && OBSTACLE[i].y == y + j)
+				return false;
+		}
+		for (int i = 0; i < triggerCount; i++) {
+			if (TRIGGER[i].x == x + j && TRIGGER[i].y == y + j)
+				return false;
+		}
+	}
+	return true;
 }
 void DrawGateIn(int& count)
 {
 	setColor(0, 9);
 	do
 	{
-		triggerIn.x = rand() % (WIDTH_CONSOLE - 5) + 2;
-		triggerIn.y = rand() % (HEIGH_CONSOLE - 7) + 4;
-	} while (!IsValid(triggerIn.x, triggerIn.y));
-	gotoXY(triggerIn.x, triggerIn.y);
+		trigger.x = rand() % (WIDTH_CONSOLE - 5) + 2;
+		trigger.y = rand() % (HEIGH_CONSOLE - 7) + 4;
+	} while (!IsValid(trigger.x, trigger.y));
+	gotoXY(trigger.x, trigger.y);
 	cout << 'x';
-	drawHorTRIG(219, 3, triggerIn.x - 1, triggerIn.y + 1, count);
-	drawVerTRIG(219, 1, triggerIn.x - 1, triggerIn.y, count);
-	drawVerTRIG(219, 1, triggerIn.x + 1, triggerIn.y, count);
+	drawHorTRIG(219, 3, trigger.x - 1, trigger.y + 1, count);
+	drawVerTRIG(219, 1, trigger.x - 1, trigger.y, count);
+	drawVerTRIG(219, 1, trigger.x + 1, trigger.y, count);
 	setColor(0, 7);
 }
 
@@ -951,6 +968,7 @@ bool IsValid(int x, int y) {
 	}
 	return true;
 }
+
 void DrawSnake() {
 	setColor(0, 10);
 	char ms[25] = "211274782112762321127237";
@@ -982,6 +1000,7 @@ void ClearFood() {
 	cout << " ";
 }
 void ThreadFunc() {
+	int x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
 	while (1) {
 		if (STATE == 1) {//If my snake is alive
 			ClearSnake();
@@ -1000,11 +1019,13 @@ void ThreadFunc() {
 				MoveDown();
 				break;
 			}
-			if (triggerIn.x == 0 && triggerIn.y == 0) {
-				DrawFood();
-			}
+			if (trigger.x == 0 && trigger.y == 0) DrawFood();
 			DrawSnake();
-			Sleep(400 / SPEED);//Sleep function with SPEEED variable
+			gotoXY(x + 10, y + 1);
+			cout << LEVEL;
+			gotoXY(x + 37, y + 1);
+			cout << SCORE;
+			Sleep(800 / SPEED);//Sleep function with SPEEED variable
 		}
 	}
 }
