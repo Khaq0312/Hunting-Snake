@@ -43,7 +43,7 @@ POINT TRIGGER[10];
 //Function exit game
 void ExitGame(HANDLE t) {
 	system("cls");
-	TerminateThread(t, 0);
+	quick_exit(0);
 }
 //Function pause game
 void PauseGame(HANDLE t) {
@@ -618,7 +618,8 @@ void drawAboutUs() {
 }
 void GenerateFood() {
 	int x, y;
-	srand((unsigned)time(NULL));
+	//srand((unsigned)time(NULL));
+	srand(1649163324);
 	for (int i = 0; i < MAX_SIZE_FOOD; i++) {
 		do {
 			x = rand() % (WIDTH_CONSOLE - 1) + 1;
@@ -1139,7 +1140,7 @@ void StartGame() {
 int main() {
 	//readFileGame("FileGame.txt");
 	//readHighScore("HighScore.txt");
-
+	srand(1649163324);
 	setWindowSize(WIDTH_WINDOW, HEIGHT_WINDOW);
 	setScreenBufferSize(WIDTH_WINDOW, HEIGHT_WINDOW);
 	fixConsoleWindow();
