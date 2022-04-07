@@ -762,29 +762,42 @@ void Level3(int& count)
 {
 	if (OBScount == 0) Level2(OBScount);
 	drawVerOBS(219, 5, 3, 3, count);
-	drawHorOBS(220, 5, 3, 3, count);
+	drawHorOBS(219, 5, 3, 3, count);
 	drawVerOBS(219, 5, WIDTH_CONSOLE - 3, 3, count);
-	drawHorOBS(220, 5, WIDTH_CONSOLE - 7, 3, count);
-	drawHorOBS(220, 5, 3, HEIGH_CONSOLE - 3, count);
+	drawHorOBS(219, 5, WIDTH_CONSOLE - 7, 3, count);
+	drawHorOBS(219, 5, 3, HEIGH_CONSOLE - 3, count);
 	drawVerOBS(219, 5, 3, HEIGH_CONSOLE - 7, count);
-	drawHorOBS(220, 5, WIDTH_CONSOLE - 7, HEIGH_CONSOLE - 3, count);
+	drawHorOBS(219, 5, WIDTH_CONSOLE - 7, HEIGH_CONSOLE - 3, count);
 	drawVerOBS(219, 5, WIDTH_CONSOLE - 3, HEIGH_CONSOLE - 7, count);
 }
 void Level4(int& count)
 {
 	if (OBScount == 0) Level3(OBScount);
-	drawVerOBS(219, 4, WIDTH_CONSOLE / 2, 1, count);
-	drawHorOBS(220, 5, 1, HEIGH_CONSOLE / 2, count);
-	drawVerOBS(219, 4, WIDTH_CONSOLE / 2, HEIGH_CONSOLE - 4, count);
-	drawHorOBS(220, 5, WIDTH_CONSOLE - 5, HEIGH_CONSOLE / 2, count);
+	drawVerOBS(219, 3, WIDTH_CONSOLE / 2, 1, count);
+	drawHorOBS(219, 5, 1, HEIGH_CONSOLE / 2, count);
+	drawVerOBS(219, 3, WIDTH_CONSOLE / 2, HEIGH_CONSOLE - 3, count);
+	drawHorOBS(219, 5, WIDTH_CONSOLE - 5, HEIGH_CONSOLE / 2, count);
 }
 void Level5(int& count)
 {
+	srand(SEED);
+	for (int i = 0; i < (LEVEL - 1) * 5 + LEVEL; i++) {
+		rand(); rand();
+	}
 	if (OBScount == 0) Level4(OBScount);
+	int x, y;
 	for (int i = 0; i < 2; i++)
 	{
-		drawVerOBS(219, 3, rand() % (WIDTH_CONSOLE - 17) + 8, rand() % (HEIGH_CONSOLE - 9) + 3, count);
-		drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 17) + 8, rand() % (HEIGH_CONSOLE - 7) + 3, count);
+		do {
+			x = rand() % (WIDTH_CONSOLE - 17) + 8;
+			y = rand() % (HEIGH_CONSOLE - 9) + 3;
+		} while (!IsValid(x, y));
+		drawVerOBS(219, 3, x, y, count);
+		do {
+			x = rand() % (WIDTH_CONSOLE - 17) + 8;
+			y = rand() % (HEIGH_CONSOLE - 7) + 3;
+		} while (!IsValid(x, y));
+		drawHorOBS(219, 5, x, y, count);
 		//drawVerOBS(219, 3, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 		//drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 	}
@@ -1074,7 +1087,6 @@ void ThreadFunc() {
 			}
 			if (trigger.x == 0 && trigger.y == 0) DrawFood();
 			DrawSnake();
-			drawLevel();
 			x = (WIDTH_WINDOW - 40) / 2, y = HEIGH_CONSOLE + 4;
 			gotoXY(x + 10, y + 1);
 			cout << LEVEL;
@@ -1122,7 +1134,7 @@ void drawSaveGameNoti() {
 	gotoXY(s.x, s.y);
 	string name;
 	showConsoleCursor(true);
-	cout << "Enter your name: ";
+	cout << "Enter file name: ";
 	cin >> name;
 	showConsoleCursor(false);
 	name = name + ".txt";
@@ -1131,7 +1143,10 @@ void drawSaveGameNoti() {
 		gotoXY(s.x, s.y);
 		cout << "File name has already existed. Do you want to replace it?";
 	}
-	
+	s = { s.x + 2,s.y + 4 };
+	cout << "YES";
+	s = { s.x + 5,s.y + 4 };
+	cout << "NO";
 }
 
 void swapScore(int& x, int& y)//Doi vi tri thu tu diem
@@ -1246,8 +1261,19 @@ int main() {
 					SaveGame("player1.txt");
 				}
 				else {
+					if (NOTI) {
+						eraseDrawing({ 1,1 }, { WIDTH_CONSOLE - 1,HEIGH_CONSOLE });
+						for (int i = 0; i < OBScount; i++) {
+							gotoXY(OBSTACLE[i].x, OBSTACLE[i].y);
+							cout << (char)219;
+						}
+						for (int i = 0; i < triggerCount; i++) {
+							gotoXY(TRIGGER[i].x, TRIGGER[i].y);
+							cout << (char)219;
+						}
+						NOTI = 0;
+					}
 					ResumeThread(handle_t1);
-					//eraseDrawing({ 1,1 }, { WIDTH_CONSOLE - 1,HEIGH_CONSOLE });
 					if ((temp != CHAR_LOCK) && (temp == 'D' || temp == 'A' || temp ==
 						'W' || temp == 'S'))
 					{
