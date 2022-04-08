@@ -709,6 +709,8 @@ void Eat() {
 	SCORE++;
 }
 void ResetData() {
+	SEED = time(NULL);
+	srand(SEED);
 	//Initialize the global values
 	CHAR_LOCK = 'A', MOVING = 'D', SPEED = 1; FOOD_INDEX = 0, WIDTH_CONSOLE = 70,
 		HEIGH_CONSOLE = 20, SIZE_SNAKE = 3, SCORE = 0, LEVEL = 1;
@@ -716,6 +718,8 @@ void ResetData() {
 	// Initialize default values for snake
 	snake[0] = { 10, 1 }; snake[1] = { 11, 1 };
 	snake[2] = { 12, 1 };
+	/*SEED = time(NULL);
+	srand(SEED);*/
 	GenerateFood();//Create food array
 }
 //Ham moi/chinh sua
@@ -791,12 +795,12 @@ void Level5(int& count)
 		do {
 			x = rand() % (WIDTH_CONSOLE - 17) + 8;
 			y = rand() % (HEIGH_CONSOLE - 9) + 3;
-		} while (!IsValid(x, y));
+		} while (!IsValidOBS(x, y, 1));
 		drawVerOBS(219, 3, x, y, count);
 		do {
 			x = rand() % (WIDTH_CONSOLE - 17) + 8;
 			y = rand() % (HEIGH_CONSOLE - 7) + 3;
-		} while (!IsValid(x, y));
+		} while (!IsValidOBS(x, y, 0));
 		drawHorOBS(219, 5, x, y, count);
 		//drawVerOBS(219, 3, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
 		//drawHorOBS(220, 5, rand() % (WIDTH_CONSOLE - 5), rand() % (HEIGH_CONSOLE - 5), count);
@@ -837,6 +841,7 @@ void MoveRight()
 		Eat();
 	}
 	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
+		OBScount = 0;
 		clearGate();
 		//if (LEVEL == 1) eraseDrawing({ 1,1 }, { WIDTH_CONSOLE - 1,HEIGH_CONSOLE - 1 });
 	}
@@ -861,6 +866,7 @@ void MoveLeft()
 		Eat();
 	}
 	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
+		OBScount = 0;
 		clearGate();
 		//if (LEVEL == 1) eraseDrawing({ 1,1 }, { WIDTH_CONSOLE - 1,HEIGH_CONSOLE - 1 });
 	}
@@ -885,6 +891,7 @@ void MoveUp()
 		Eat();
 	}
 	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
+		OBScount = 0;
 		clearGate();
 		//if (LEVEL == 1) eraseDrawing({ 1,1 }, { WIDTH_CONSOLE - 1,HEIGH_CONSOLE - 1 });
 	}
@@ -912,6 +919,7 @@ void MoveDown()
 		moveGate();
 	}
 	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 8 && snake[0].y == 1) {
+		OBScount = 0;
 		clearGate();
 		//if (LEVEL == 1) eraseDrawing({ 1,1 }, { WIDTH_CONSOLE - 1,HEIGH_CONSOLE - 1 });
 	}
@@ -931,10 +939,12 @@ void moveGate() {
 		snake[i].x = snake[i + 1].x;
 		snake[i].y = snake[i + 1].y;
 	}
-	snake[SIZE_SNAKE - 1] = { WIDTH_CONSOLE - 8,1 };
 	if (LEVEL == MAX_LEVEL) {
 		LEVEL = 1;
 		SPEED = SPEED - 3; // tang 1 so voi speed ban dau cua vong truoc
+		snake[2] = { trigger.x, trigger.y };
+		snake[1] = { trigger.x, trigger.y - 1 };
+		snake[0] = snake[SIZE_SNAKE - 3];
 		SIZE_SNAKE = 3;
 		//---------------//
 		OBScount = 0; triggerCount = 0; trigger = { 0,0 };
@@ -945,8 +955,10 @@ void moveGate() {
 		//---------------//
 	}
 	else {
+		snake[SIZE_SNAKE - 1] = { WIDTH_CONSOLE - 8,1 };
 		LEVEL++; SPEED++;
 		SCORE += 5;
+		drawLevel();
 	}
 	triggerCount = 1; // Dieu kien gia dinh de xac nhan ran da di qua cong
 }
@@ -977,9 +989,8 @@ void clearGate() {
 	drawHorLine(219, 3, trigger.x - 1, trigger.y);
 	setColor(BG_COLOR, 7);
 	trigger = { 0,0 };
-	drawLevel();
+	if (LEVEL != 5) drawLevel();
 	GenerateFood();
-
 }
 bool IsValidGate(int x, int y) {
 	int a[] = { -1,0,1,-1,1,-1,0,1 };
@@ -1020,21 +1031,43 @@ void DrawGateIn()
 }
 
 bool IsValid(int x, int y) {
-	for (int i = 0; i < SIZE_SNAKE; i++) {
-		if (snake[i].x == x && snake[i].y == y)
-			return false;
-	}
-	for (int i = 0; i < OBScount; i++) {
-		if (OBSTACLE[i].x == x && OBSTACLE[i].y == y)
-			return false;
-	}
-	for (int i = 0; i < triggerCount; i++) {
-		if (TRIGGER[i].x == x && TRIGGER[i].y == y)
-			return false;
+
+	int count = OBScount;
+	if (SIZE_SNAKE > OBScount)
+		int count = SIZE_SNAKE;
+	for (int i = 0; i < count; i++) {
+		if (i < triggerCount)
+			if (TRIGGER[i].x == x && TRIGGER[i].y == y)
+				return false;
+		if (i < SIZE_SNAKE)
+			if (snake[i].x == x && snake[i].y == y)
+				return false;
+		if (i < OBScount)
+			if (OBSTACLE[i].x == x && OBSTACLE[i].y == y)
+				return false;
 	}
 	return true;
 }
-
+bool IsValidOBS(int x, int y, int mode) {
+	for (int j = 0; j < 5 - 2 * mode; j++)
+	{
+		int count = OBScount;
+		if (SIZE_SNAKE > OBScount)
+			int count = SIZE_SNAKE;
+		for (int i = 0; i < count; i++) {
+			if (i < triggerCount)
+				if (TRIGGER[i].x == x + (1 - mode) * j && TRIGGER[i].y == y + mode * j)
+					return false;
+			if (i < SIZE_SNAKE)
+				if (snake[i].x == x + (1 - mode) * j && snake[i].y == y + mode * j)
+					return false;
+			if (i < OBScount)
+				if (OBSTACLE[i].x == x + (1 - mode) * j && OBSTACLE[i].y == y + mode * j)
+					return false;
+		}
+	}
+	return true;
+}
 void DrawSnake() {
 	setColor(BG_COLOR, 10);
 	char ms[25] = "211274782112762321127237";
@@ -1231,8 +1264,6 @@ void StartGame() {
 	STATE = 1;//Start running Thread
 }
 int main() {
-	SEED = time(NULL);
-	srand(SEED);
 	//readFileGame("FileGame.txt");
 	//readHighScore("HighScore.txt");
 	setWindowSize(WIDTH_WINDOW, HEIGHT_WINDOW);

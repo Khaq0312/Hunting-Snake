@@ -12,3 +12,4 @@ void clearGate();
 void drawLevel();
 void drawPauseGameNoti();
 void drawSaveGameNoti();
+bool IsValidOBS(int x, int y, int mode);
