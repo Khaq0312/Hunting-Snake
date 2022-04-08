@@ -45,7 +45,7 @@ bool NOTI = 0;
 //Function exit game
 void ExitGame(HANDLE t) {
 	system("cls");
-	TerminateThread(t, 0);
+	quick_exit(0);
 }
 //Function pause game
 void PauseGame(HANDLE t) {
@@ -626,7 +626,6 @@ void GenerateFood() {
 	for (int i = 0; i < (LEVEL - 1) * 5 + LEVEL; i++) {
 		rand(); rand();
 	}
-	
 	for (int i = 0; i < MAX_SIZE_FOOD; i++) {
 		do {
 			x = rand() % (WIDTH_CONSOLE - 1) + 1;
