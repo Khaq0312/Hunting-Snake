@@ -27,6 +27,7 @@ int triggerCount;
 POINT TRIGGER[5];
 int SEED;
 bool stop_thread;
+bool NOTI = 0;
 //Function pause game
 void PauseGame(HANDLE t) {
 	SuspendThread(t);
@@ -150,10 +151,13 @@ void ResetData() {
 	// Initialize default values for snake
 	snake[0] = { 10, 1 }; snake[1] = { 11, 1 };
 	snake[2] = { 12, 1 };
+	/*SEED = time(NULL);
+	srand(SEED);*/
 	GenerateFood();//Create food array
 }
 bool TouchOBS(int x, int y) {
 	for (int i = 0; i < OBScount; ++i) {
+
 		if (x == OBSTACLE[i].x && y == OBSTACLE[i].y)
 			return false;
 	}
@@ -238,7 +242,7 @@ void MoveDown() {
 	else if (trigger.x != 0 && trigger.y != 0 && snake[SIZE_SNAKE - 1].x == trigger.x && snake[SIZE_SNAKE - 1].y + 1 == trigger.y) {
 		moveGate();
 	}
-	else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 10 && snake[0].y == 1) {
+else if (triggerCount == 1 && snake[0].x == WIDTH_CONSOLE - 10 && snake[0].y == 1) {
 		clearGate();
 	}
 	else {
